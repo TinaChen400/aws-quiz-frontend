@@ -5,7 +5,8 @@ import axios from "axios";
 
 const { Option } = Select;
 
-const API_BASE = import.meta.env.VITE_API_BASE;
+const baseURL = import.meta.env.VITE_API_BASE || 'http://localhost:8000'; // or default
+
 
 function QuizPage() {
   const [question, setQuestion] = useState(null);
