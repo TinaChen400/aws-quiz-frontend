@@ -16,7 +16,7 @@ function QuizPage() {
   const [isCorrect, setIsCorrect] = useState(null);
 
   useEffect(() => {
-    axios.get("${API_BASE}/quiz/topics").then((res) => {
+    axios.get(`${API_BASE}/quiz/topics`).then((res) => {
       if (res.data.topics) {
         setTopics(res.data.topics);
       } else {
