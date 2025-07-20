@@ -1,0 +1,24 @@
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.question {
+  white-space: pre-wrap;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* src/styles/global.css 或 QuizPage.module.css */
+.correct {
+  color: green;
+  font-weight: bold;
+}
+
+.incorrect {
+  color: red;
+  font-weight: bold;
+}
