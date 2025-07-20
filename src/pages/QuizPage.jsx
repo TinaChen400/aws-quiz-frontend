@@ -5,7 +5,7 @@ import axios from "axios";
 
 const { Option } = Select;
 
-const baseURL = import.meta.env.VITE_API_BASE || 'http://localhost:8000'; // or default
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 
 function QuizPage() {
