@@ -12,7 +12,6 @@
   line-height: 1.6;
 }
 
-/* src/styles/global.css 或 QuizPage.module.css */
 .correct {
   color: green;
   font-weight: bold;
@@ -22,3 +21,20 @@
   color: red;
   font-weight: bold;
 }
+
+/* 可选增强样式 */
+label:hover {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.explanationBox {
+  margin-top: 8px;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fefefe;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+

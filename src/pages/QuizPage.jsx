@@ -4,9 +4,7 @@ import QuestionCard from "../components/QuestionCard";
 import axios from "axios";
 
 const { Option } = Select;
-
-const API_BASE = process.env.REACT_APP_API_BASE;
-
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000";
 
 function QuizPage() {
   const [question, setQuestion] = useState(null);
@@ -15,6 +13,7 @@ function QuizPage() {
 
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState(null);
+  const [explanation, setExplanation] = useState(""); // ✅ 错题解析内容
 
   useEffect(() => {
     axios.get(`${API_BASE}/quiz/topics`).then((res) => {
@@ -39,13 +38,42 @@ function QuizPage() {
         setQuestion(res.data);
         setSelectedAnswer("");
         setIsCorrect(null);
+        setExplanation(""); // ✅ 清除旧解析
       }
     });
   };
 
+  // ✅ 调用 AI 接口解析错题
+  const explainMistake = async (questionData) => {
+    try {
+      const res = await axios.post(`${API_BASE}/quiz/explain`, {
+        question: questionData.question,
+        options: questionData.options.reduce((acc, cur) => {
+          acc[cur.key] = cur.text;
+          return acc;
+        }, {}),
+        user_answer: selectedAnswer,
+        correct_answer: questionData.answer,
+        topic: questionData.topic,
+      });
+      setExplanation(res.data.response || "暂无解析内容");
+    } catch (error) {
+      console.error("解析失败：", error);
+      setExplanation("解析失败，请稍后重试");
+    }
+  };
+
+  // ✅ 用户选择答案后触发
   const handleAnswer = (key) => {
     setSelectedAnswer(key);
-    setIsCorrect(key === question.answer);
+    const correct = key === question.answer;
+    setIsCorrect(correct);
+
+    if (!correct) {
+      explainMistake(question);
+    } else {
+      setExplanation("");
+    }
   };
 
   const nextQuestion = () => {
@@ -55,6 +83,7 @@ function QuizPage() {
   return (
     <div style={{ padding: "20px" }}>
       <h2>🧠 AWS AI 练习系统</h2>
+
       <label>选择分类：</label>
       <Select
         style={{ width: 200, marginRight: 10 }}
@@ -67,16 +96,17 @@ function QuizPage() {
           </Option>
         ))}
       </Select>
-        <Button
-           type="primary"
-           onClick={() => {
-              loadQuestion(); // 获取下一题
-              setSelectedAnswer(""); // ✅ 重置选择
-              setIsCorrect(null); // ✅ 重置判定
-          }}
-        >
-           下一题
-        </Button>
+
+      <Button
+        type="primary"
+        onClick={() => {
+          loadQuestion();
+          setSelectedAnswer("");
+          setIsCorrect(null);
+        }}
+      >
+        下一题
+      </Button>
 
       {question && (
         <div style={{ marginTop: 30 }}>
@@ -88,6 +118,7 @@ function QuizPage() {
             isCorrect={isCorrect}
             onAnswer={handleAnswer}
             onNext={nextQuestion}
+            explanation={explanation} // ✅ 将解析传入组件
           />
         </div>
       )}

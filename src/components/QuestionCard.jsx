@@ -1,5 +1,7 @@
 import React from "react";
 import styles from "./QuestionCard.module.css";
+import { Collapse } from "antd"; // ✅ 新增导入
+const { Panel } = Collapse;
 
 function QuestionCard({
   question,
@@ -8,12 +10,20 @@ function QuestionCard({
   correctAnswer,
   isCorrect,
   onAnswer,
-  onNext  // ✅ 新增：支持传入下一题函数
+  onNext,
+  explanation, // ✅ 新增：接收解释
+  questionNumber,
+  totalQuestions
 }) {
   return (
     <div className={styles.card}>
-      <h3>📌 题目：</h3>
+      <h3>
+        📌 题目 {questionNumber}
+        {totalQuestions ? ` / ${totalQuestions}` : ""}
+      ：
+      </h3>
       <p>{question}</p>
+
       {options.map((opt) => (
         <div key={opt.key} style={{ marginBottom: "8px" }}>
           <label>
@@ -21,7 +31,7 @@ function QuestionCard({
               type="radio"
               name={`option-${question}`}
               value={opt.key}
-              checked={selectedAnswer === opt.key} 
+              checked={selectedAnswer === opt.key}
               onChange={() => onAnswer(opt.key)}
               disabled={!!selectedAnswer}
               style={{ marginRight: "6px" }}
@@ -54,6 +64,16 @@ function QuestionCard({
               </span>
             )}
           </p>
+
+          {/* ✅ 错题解析可折叠显示 */}
+          {!isCorrect && explanation && (
+            <Collapse style={{ marginTop: "10px" }}>
+              <Panel header="💡 查看错题解析" key="1">
+                <div className={styles.explanationBox}>{explanation}</div>
+              </Panel>
+            </Collapse>
+          )}
+
           <button onClick={onNext} style={{ marginTop: "10px" }}>
             下一题
           </button>
